@@ -41,36 +41,48 @@ else:
 
 #%%
 samples = []
-# for _, sample in tqdm(enumerate(train_set)):
-for _, sample in tqdm(enumerate(train_set[:1000])):
+for _, sample in tqdm(enumerate(train_set)):
+# for _, sample in tqdm(enumerate(train_set[:1000])):
     row = sample.split(" ")[:-1]
     new_row = [re.sub(".*:", "", row[j]) for j in range(len(row))]
     samples.append(new_row)
 
-columns = ["relevance", "qid"] + [f"feat_{i}" for i in range(1, len(samples[0])-1)]
+columns = ["relevance", "qid"] + [f"feat{i}" for i in range(1, len(samples[0])-1)]
 df = pd.DataFrame(
     data=samples,
     columns=columns,
     dtype=float,
     )
-qid_1 = df[df["qid"] == 1]
-relevance = qid_1["relevance"].values
-features = qid_1.iloc[:, 2:].to_numpy()
+qid_list = df["qid"].unique()
 
-np.savez("./qid_1.npz", relevance=relevance, features=features)
-tmp = np.load("./qid_1.npz")
+
+#%%
+# split="train"
+for dataset, split in [(train_set, "train"), (valid_set, "valid"), (test_set, "test")]:
+    save_dir = f"{data_dir}/{split}"
+    os.makedirs(save_dir, exist_ok=True)
+
+    for _, sample in tqdm(enumerate(dataset)):
+        row = sample.split(" ")[:-1]
+        new_row = [re.sub(".*:", "", row[j]) for j in range(len(row))]
+        samples.append(new_row)
+
+    columns = ["relevance", "qid"] + [f"feat{i}" for i in range(1, len(samples[0])-1)]
+    df = pd.DataFrame(
+        data=samples,
+        columns=columns,
+        dtype=float,
+        )
+    qid_list = df["qid"].unique()
+
+    for qid in tqdm(qid_list):
+        df_qid = df[df["qid"] == qid]
+        relevance = df_qid["relevance"].values
+        features = df_qid.iloc[:, 2:].to_numpy()
+        np.savez(f"{save_dir}/qid_{'{0:0>5}'.format(int(qid))}.npz", relevance=relevance, features=features)
+
+
+#%%
+tmp = np.load(f"{save_dir}/qid_00006.npz")
 tmp["relevance"]
 tmp["features"]
-#%%
-
-columns = ["relevance", "qid", ]
-train_set = pd.read_table(f"{data_dir}/set1.train.txt", sep="\t")
-
-relevance_label = {
-    0: "Bad",
-    1: "Fair",
-    2: "Good",
-    3: "Excellent",
-    4: "Perfect",
-}
-
