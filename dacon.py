@@ -65,8 +65,20 @@ yahoo2 = pd.read_table("/Users/wonhyung64/data/Learning to Rank Challenge/ltrc_y
 import tensorflow_datasets as tfds
 ds = tfds.load("yahoo_ltrc/set1")
 ds = tfds.load("yahoo_ltrc/set2")
-ds = tfds.load("mslr_web", data_dir = "/Users/wonhyung64/data/tfds")
-tmp = iter(ds["train"])
+ds = tfds.load("mslr_web", data_dir = "/Users/wonhyung64/data/tfds", split="train")
+# ds = tfds.load("mslr_web/10k_fold1", split="train")
+import tensorflow as tf
+ds = ds.map(lambda feature_map: {
+    "_mask": tf.ones_like(feature_map["label"], dtype=tf.bool),
+    **feature_map
+})
+# ds = ds.shuffle(buffer_size=1000).padded_batch(batch_size=32)
+ds = ds.padded_batch(batch_size=32)
+ds = ds.map(lambda feature_map: (
+    feature_map, tf.where(feature_map["_mask"], feature_map.pop("label"), -1.)))
+iter(ds)
+ds
+tmp = iter(ds)
 tmp = tfds.as_dataframe(ds["train"].take(10))
 a = next(tmp)
 a.keys()
@@ -78,4 +90,6 @@ a["boolean_model_body"]
 a["boolean_model_url"]
 
 a["doc_id"]
-ds
+ds.elements.spec[0]
+type(a)
+a[1]
