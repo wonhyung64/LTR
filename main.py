@@ -6,27 +6,37 @@ import pandas as pd
 
 
 #%%
-# dataset_list = ["Web30K", "Yahoo", "Istella"]
 data_root = "."
-name = "Yahoo"
+name = "Web30K"
 
-if name == "Web30K":
-    data_dir = f"{data_root}/data/{name}"
-elif name == "Yahoo":
+if name == "Yahoo":
     data_dir = f"{data_root}/data/{name}/ltrc_yahoo"
+    with open(f"{data_dir}/set1.train.txt", 'r') as f:
+        train_set = f.readlines()
+    with open(f"{data_dir}/set1.valid.txt", 'r') as f:
+        valid_set = f.readlines()
+    with open(f"{data_dir}/set1.test.txt", 'r') as f:
+        test_set = f.readlines()
+elif name == "Web30K":
+    data_dir = f"{data_root}/data/{name}/Fold1"
+    with open(f"{data_dir}/train.txt", 'r') as f:
+        train_set = f.readlines()
+    with open(f"{data_dir}/vali.txt", 'r') as f:
+        valid_set = f.readlines()
+    with open(f"{data_dir}/test.txt", 'r') as f:
+        test_set = f.readlines()
 elif name == "Istella":
-    data_dir = f"{data_root}/data/{name}"
+    data_dir = f"{data_root}/data/{name}/full"
+    with open(f"{data_dir}/train.txt", 'r') as f:
+        train_set = f.readlines()
+    valid_set = None
+    with open(f"{data_dir}/test.txt", 'r') as f:
+        test_set = f.readlines()
 else:
     raise ValueError("Unknow dataset name. Please choose in ['Web30K', 'Yahoo', 'Istella']")
+train_set[:86]
+#%%
 
-os.listdir(data_dir)
-
-with open(f"{data_dir}/set1.train.txt", 'r') as f:
-    a = f.readlines()
-len(a)
-
-
-a[-1]
 columns = ["relevance", "qid", ]
 train_set = pd.read_table(f"{data_dir}/set1.train.txt", sep="\t")
 
