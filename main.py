@@ -1,7 +1,7 @@
 #%%
 import re
 import os
-import torch
+#import torch
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -10,8 +10,8 @@ from tqdm import tqdm
 #%%
 #load raw data
 data_root = "."
-name = "Yahoo"
-# name = "Web30K"
+# name = "Yahoo"
+name = "Web30K"
 # name = "Istella"
 data_dir = f"{data_root}/data/{name}"
 
@@ -76,3 +76,9 @@ for dataset, split in [(train_set, "train"), (valid_set, "valid"), (test_set, "t
         features = df_qid.iloc[:, 2:].to_numpy()
         np.savez(f"{save_dir}/qid_{'{0:0>6}'.format(int(qid))}.npz", relevance=relevance, features=features)
 
+
+#%%
+file_list = os.listdir(f"{data_dir}/train")
+sample = np.load(f"{data_dir}/train/{file_list[0]}")
+print(sample["features"].shape)
+print(sample["relevance"].shape)
