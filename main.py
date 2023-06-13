@@ -1,18 +1,22 @@
 #%%
+import re
 import os
-# import torch
+import torch
 import numpy as np
 import pandas as pd
-
-import re
 from tqdm import tqdm
 
+
 #%%
+#load raw data
 data_root = "."
-name = "Web30K"
+name = "Yahoo"
+# name = "Web30K"
+# name = "Istella"
 data_dir = f"{data_root}/data/{name}"
 
 if name == "Yahoo":
+    feat_num = 699
     with open(f"{data_dir}/ltrc_yahoo/set1.train.txt", 'r') as f:
         train_set = f.readlines()
     with open(f"{data_dir}/ltrc_yahoo/set1.valid.txt", 'r') as f:
@@ -21,6 +25,7 @@ if name == "Yahoo":
         test_set = f.readlines()
 
 elif name == "Web30K":
+    feat_num = 136
     with open(f"{data_dir}/Fold1/train.txt", 'r') as f:
         train_set = f.readlines()
     with open(f"{data_dir}/Fold1/vali.txt", 'r') as f:
@@ -29,6 +34,7 @@ elif name == "Web30K":
         test_set = f.readlines()
 
 elif name == "Istella":
+    feat_num = 220
     with open(f"{data_dir}/full/train.txt", 'r') as f:
         train_set = f.readlines()
     valid_set = None
@@ -40,49 +46,33 @@ else:
 
 
 #%%
-samples = []
-for _, sample in tqdm(enumerate(train_set)):
-# for _, sample in tqdm(enumerate(train_set[:1000])):
-    row = sample.split(" ")[:-1]
-    new_row = [re.sub(".*:", "", row[j]) for j in range(len(row))]
-    samples.append(new_row)
-
-columns = ["relevance", "qid"] + [f"feat{i}" for i in range(1, len(samples[0])-1)]
-df = pd.DataFrame(
-    data=samples,
-    columns=columns,
-    dtype=float,
-    )
-qid_list = df["qid"].unique()
-
-
-#%%
-# split="train"
+# refine data
 for dataset, split in [(train_set, "train"), (valid_set, "valid"), (test_set, "test")]:
+    if dataset is None: 
+        continue
     save_dir = f"{data_dir}/{split}"
     os.makedirs(save_dir, exist_ok=True)
 
+    samples = []
     for _, sample in tqdm(enumerate(dataset)):
-        row = sample.split(" ")[:-1]
-        new_row = [re.sub(".*:", "", row[j]) for j in range(len(row))]
-        samples.append(new_row)
+        row = re.sub("\n| \n", "", sample).split(" ")
+        new_row = [-1. for i in range(feat_num)]
+        relevance = int(row[0])
+        qid = row[1].split(":")[-1]
 
-    columns = ["relevance", "qid"] + [f"feat{i}" for i in range(1, len(samples[0])-1)]
-    df = pd.DataFrame(
-        data=samples,
-        columns=columns,
-        dtype=float,
-        )
+        for __, value in enumerate(row[2:]):
+            k, v = value.split(":")
+            new_row[int(k)-1] += float(v) + 1.
+
+        samples.append([relevance, qid] + new_row)
+
+    columns = ["relevance", "qid"]+ [f"feat{str(i)}" for i in range(1, feat_num+1)]
+    df = pd.DataFrame(data=samples, columns=columns)
     qid_list = df["qid"].unique()
 
     for qid in tqdm(qid_list):
         df_qid = df[df["qid"] == qid]
         relevance = df_qid["relevance"].values
         features = df_qid.iloc[:, 2:].to_numpy()
-        np.savez(f"{save_dir}/qid_{'{0:0>5}'.format(int(qid))}.npz", relevance=relevance, features=features)
+        np.savez(f"{save_dir}/qid_{'{0:0>6}'.format(int(qid))}.npz", relevance=relevance, features=features)
 
-
-#%%
-tmp = np.load(f"{save_dir}/qid_00006.npz")
-tmp["relevance"]
-tmp["features"]
