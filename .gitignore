@@ -20,3 +20,4 @@ bin-release/
 .DS_Store
 data
 */__pycache__/*
+*.pyc
