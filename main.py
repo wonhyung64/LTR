@@ -11,8 +11,8 @@ from tqdm import tqdm
 #load raw data
 data_root = "."
 # name = "Yahoo"
-name = "Web30K"
-# name = "Istella"
+# name = "Web30K"
+name = "Istella"
 data_dir = f"{data_root}/data/{name}"
 
 if name == "Yahoo":
