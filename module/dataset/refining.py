@@ -46,9 +46,6 @@ def load_raw_data(name: str, data_dir: str) -> Tuple[Tuple[List, List, List], in
         with open(f"{data_dir}/full/test.txt", 'r') as f:
             test_set = f.readlines()
 
-    else:
-        raise ValueError("Unknown dataset name. Please choose in ['Web30K', 'Yahoo', 'Istella']")
-
     return (train_set, valid_set, test_set), feat_num
 
 
