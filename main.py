@@ -21,6 +21,12 @@ from module.dataset.loader import (
     IRDataset,
     ir_collate_fn,
 )
+from module.evaluate.metric import (
+    cg_fn,
+    dcg_fn,
+    idcg_fn,
+    ndcg_fn,
+)
 
 
 #%%
@@ -61,18 +67,10 @@ if __name__ == "__main__":
         batch_y = batch_y.to(device)
         print(batch_x.shape, batch_y.shape)
         break
-    for batch_x, batch_y in valid_loader:
-        print(batch_x.shape, batch_y.shape)
-        break
-    for batch_x, batch_y in test_loader:
-        print(batch_x.shape, batch_y.shape)
-        break
 
-# %%
+    relevance = batch_y
 
-true = batch_y
-pred = batch_y
-relevance = batch_y
-relevance.sum(axis=1)
-
-
+    print(cg_fn(relevance))
+    print(dcg_fn(relevance))
+    print(idcg_fn(relevance))
+    print(ndcg_fn(relevance))
