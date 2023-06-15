@@ -21,11 +21,11 @@ def cg_fn(relevance: torch.Tensor) -> torch.Tensor:
 
 @compute_metric
 def dcg_fn(relevance: torch.Tensor, exp: bool=False) -> torch.Tensor:
+    cg, value_idx = undeco(cg_fn)(relevance)
     if exp:
-        relevance = 2**relevance - 1
+        cg = 2**cg - 1
     weights = torch.log(torch.tensor(range(1, relevance.shape[-1] + 1)) + 1).to(relevance.device)
-    dcg = relevance / weights
-    value_idx = torch.where(relevance == -1, 0, 1).to(relevance.device)
+    dcg = cg / weights
 
     return dcg, value_idx
 
@@ -44,4 +44,5 @@ def idcg_fn(relevance: torch.Tensor, exp: bool=False) -> torch.Tensor:
 def ndcg_fn(relevance: torch.Tensor, exp: bool=False) -> torch.Tensor:
     dcg, value_idx = undeco(dcg_fn)(relevance, exp)
     idcg = idcg_fn(relevance, exp)
+
     return dcg / idcg.unsqueeze(-1), value_idx
