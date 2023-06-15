@@ -1,6 +1,15 @@
 import torch
 import random
 import numpy as np
+from types import FunctionType
+
+
+def undeco(func):
+    if func.__closure__:
+        for cell in func.__closure__:
+            if isinstance(cell.cell_contents, FunctionType):
+                return cell.cell_contents
+    return func
 
 
 def check_data(name):
