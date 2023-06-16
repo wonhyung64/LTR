@@ -74,3 +74,5 @@ if __name__ == "__main__":
     print(dcg_fn(relevance))
     print(idcg_fn(relevance))
     print(ndcg_fn(relevance))
+
+# %%
