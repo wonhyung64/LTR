@@ -1,0 +1,14 @@
+name: package_test
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    parameters:
+      batch_size: {type: int, default: 100}
+      epochs: {type: int, default: 1000}
+    command: "python train.py --batch_size={batch_size} --epochs={epochs}"
+  test:
+    parameters:
+      batch_size: {type: int, default: 10}
+      epochs: {type: int, default: 100}
+    command: "python test.py --batch_size={batch_size} --epochs={epochs}"

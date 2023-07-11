@@ -1,0 +1,10 @@
+name: package_test
+channels:
+  - defaults
+  - anaconda
+  - conda-forge
+dependencies:
+  - python=3.9.7
+  - pip
+  -pip:
+    - mlflow
