@@ -38,6 +38,22 @@ cov = np.array([
     [.25,.25,.25,4]
     ])
 
+# cov = np.array([
+#     [10,1,1,1],
+#     [1,10,1,1],
+#     [1,1,10,1],
+#     [1,1,1,10]
+#     ])
+
+# cov = np.identity(4)
+
+# cov = np.array([
+#     [10,1,1,1],
+#     [1,10,1,1],
+#     [1,1,10,1],
+#     [1,1,1,10]
+#     ])
+
 seeds = 30
 max_sampling_num = 10000
 
@@ -156,7 +172,7 @@ for seed in range(seed):
                     mc_seed_200.append(sampling_num)
 
         if cond_is_num < 200:
-            z = np.random.multivariate_normal(mu_2, cov_2, 1)
+            z = np.random.multivariate_normal(mu_2, cov, 1)
             [[z1, z2, z3, z4]] = z.tolist()
 
             if z1 > z2 > z3 > z4:
