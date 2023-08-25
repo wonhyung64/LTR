@@ -161,7 +161,6 @@ np.save(f"{save_dir}/ns_10000", np.array(ns_seed_10000), allow_pickle=True)
 np.save(f"{save_dir}/ns_100000", np.array(ns_seed_100000), allow_pickle=True)
 
 #%%
-'''
 print("\n반복실험: 30, 샘플수: 100")
 show_result(ns_seed_100, is_seed_100, num_seed=1000)
 print("\n반복실험: 30, 샘플수: 1000")
@@ -173,32 +172,6 @@ show_result(ns_seed_100000, is_seed_100000, num_seed=1000)
 
 
 #%%
-"""boxplot"""
-result_list = [
-    ("1000", ns_seed_1000, is_seed_1000),
-    ("10000", ns_seed_10000, is_seed_10000),
-    ("100000", ns_seed_100000, is_seed_100000),
-    ]
-fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(30, 10))
-for i, (n, ns_seed_result, is_seed_result) in enumerate(result_list):
-    result_df = result2df(ns_seed_result, is_seed_result)
-    sns.boxplot(data=result_df, x="sampling", y="mu", ax=axes[i])
-    axes[i].set_title(f"n = {n}")
-    axes[i].set_xlabel("Method")
-    axes[i].set_ylabel("Estimates of mu")
-    options = [
-        axes[i].title,
-        axes[i].xaxis.label,
-        axes[i].yaxis.label,
-        ]
-    option_list = options + axes[i].get_xticklabels() + axes[i].get_yticklabels()
-    for item in option_list:
-        item.set_fontsize(20)
-
-fig.set_tight_layout(tight=True)
-
-plt.show()
-
 #%%
 """likelihood ratio 평균"""
 for s in range(seeds):
@@ -264,17 +237,67 @@ for seed in range(seed):
 
 
 #%%
-np.mean(mc_seed_50[:10])
-np.mean(is_seed_50[:10])
-np.mean(mc_seed_100[:10])
-np.mean(is_seed_100[:10])
-np.mean(mc_seed_200[:10])
-np.mean(is_seed_200[:10])
+import os
+result_dir = "data/simulation"
+ns_list = [file for file in os.listdir(result_dir) if file.__contains__("ns_")]
+for file in ns_list:
+    repl_results = np.load(f"./{result_dir}/{file}")
+    print(f"File: {file} / Mean: {np.mean(repl_results)} / Std: {np.std(repl_results)}")
 
-np.mean(mc_seed_50)
-np.mean(is_seed_50)
-np.mean(mc_seed_100)
-np.mean(is_seed_100)
-np.mean(mc_seed_200)
-np.mean(is_seed_200)
-'''
+is_list = [file for file in os.listdir(result_dir) if file.__contains__("_1_0.npy")]
+for file in is_list:
+    repl_results = np.load(f"./{result_dir}/{file}")
+    print(f"File: {file} / Mean: {np.mean(repl_results)} / Std: {np.std(repl_results)}")
+
+#%%
+ns_seed_100 = np.load(f"./{result_dir}/ns_100.npy")
+ns_seed_1000 = np.load(f"./{result_dir}/ns_1000.npy")
+ns_seed_10000 = np.load(f"./{result_dir}/ns_10000.npy")
+ns_seed_100000 = np.load(f"./{result_dir}/ns_100000.npy")
+
+is_seed_100 = np.load(f"./{result_dir}/is_100_1_0.npy")
+is_seed_1000 = np.load(f"./{result_dir}/is_1000_1_0.npy")
+is_seed_10000 = np.load(f"./{result_dir}/is_10000_1_0.npy")
+is_seed_100000 = np.load(f"./{result_dir}/is_100000_1_0.npy")
+
+"""boxplot"""
+result_list = [
+    ("100", ns_seed_100, is_seed_100),
+    ("1000", ns_seed_1000, is_seed_1000),
+    ("10000", ns_seed_10000, is_seed_10000),
+    ("100000", ns_seed_100000, is_seed_100000),
+    ]
+# ns_seed_result.tolist()
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20, 20))
+for num, (n, ns_seed_result, is_seed_result) in enumerate(result_list):
+    i = num // 2
+    j = num % 2
+    result_df = result2df(ns_seed_result.tolist()[:], is_seed_result.tolist()[:])
+    sns.boxplot(data=result_df, x="sampling", y="mu", ax=axes[i][j])
+    axes[i][j].set_title(f"n = {n}")
+    axes[i][j].set_xlabel("Method")
+    axes[i][j].set_ylabel("Estimates of mu")
+    options = [
+        axes[i][j].title,
+        axes[i][j].xaxis.label,
+        axes[i][j].yaxis.label,
+        ]
+    option_list = options + axes[i][j].get_xticklabels() + axes[i][j].get_yticklabels()
+    for item in option_list:
+        item.set_fontsize(20)
+
+fig.set_tight_layout(tight=True)
+
+plt.show()
+
+
+#%% line graph
+sample_list = ["100_", "1000_", "10000_", "100000_"]
+scale_list = ["_0_5.", "_0_8.", "_1_1.", "_1_4000000000000001.", "_1_7000000000000002.", "_2_0"]
+for sample_str in sample_list:
+    sample_files = [file for file in os.listdir(result_dir) if file.__contains__(sample_str)]
+    for scale_str in scale_list:
+        scale_file = [file for file in sample_files if file.__contains__(scale_str)]
+        print(scale_file)
+        np.open(f"./{result_dir}")
+
