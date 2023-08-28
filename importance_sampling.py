@@ -291,13 +291,81 @@ fig.set_tight_layout(tight=True)
 plt.show()
 
 
+
 #%% line graph
 sample_list = ["100_", "1000_", "10000_", "100000_"]
 scale_list = ["_0_5.", "_0_8.", "_1_1.", "_1_4000000000000001.", "_1_7000000000000002.", "_2_0"]
+scale_factors = [0.5, 0.8, 1.1, 1.4, 1.7, 2.0]
+sample_labels = ["100", "1000", "10000", "100000"]
+total_results = []
+ns_results = []
 for sample_str in sample_list:
-    sample_files = [file for file in os.listdir(result_dir) if file.__contains__(sample_str)]
+    sample_files = [file for file in os.listdir(result_dir) if file.__contains__(sample_str) and not file.__contains__("_1_0.")]
+    ns_file = [file for file in os.listdir(result_dir) if file.__contains__(sample_str.replace("_", "")) and file.__contains__("ns")][0]
+    ns_result = np.load(f"./{result_dir}/{ns_file}") 
+    ns_var = np.var(ns_result)
+    ns_results.append(ns_var)
+    results = []
     for scale_str in scale_list:
-        scale_file = [file for file in sample_files if file.__contains__(scale_str)]
+        scale_file = [file for file in sample_files if file.__contains__(scale_str)][0]
         print(scale_file)
-        np.open(f"./{result_dir}")
+        scale_result = np.load(f"./{result_dir}/{scale_file}")
+        scale_var = np.var(scale_result)
+        results.append(scale_var)
+    total_results.append(results)
+
+
+#%%
+fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20, 20))
+fig.set_facecolor('white')
+for num, (label, vars) in enumerate(zip(sample_labels, total_results)):
+    i = num // 2
+    j = num % 2
+    sns.lineplot(x=scale_factors, y=ns_results[num], label="Naive", ax=axes[i][j])
+    sns.lineplot(x=scale_factors, y=vars, label="Importance", ax=axes[i][j])
+    axes[i][j].set_title(f"n = {label}")
+    axes[i][j].set_xlabel("Scale Factor")
+    axes[i][j].set_ylabel("Variance of Esimates")
+    options = [
+        axes[i][j].title,
+        axes[i][j].xaxis.label,
+        axes[i][j].yaxis.label,
+        ]
+    option_list = options + axes[i][j].get_xticklabels() + axes[i][j].get_yticklabels()
+    for item in option_list:
+        item.set_fontsize(20)
+
+fig.set_tight_layout(tight=True)
+
+plt.show()
+
+
+#%%
+total_results = []
+for sample_str in sample_list:
+    sample_files = [file for file in os.listdir(result_dir) if file.__contains__(sample_str) and not file.__contains__("_1_0.")]
+    results = []
+    for scale_str in scale_list:
+        scale_file = [file for file in sample_files if file.__contains__(scale_str)][0]
+        print(scale_file)
+        scale_result = np.load(f"./{result_dir}/{scale_file}")
+        scale_var = np.var(scale_result)
+        results.append(scale_var)
+    total_results.append(results)
+
+
+#%% 
+fig = plt.figure(figsize=(10, 10))
+fig.set_facecolor('white')
+for label, vars in zip(sample_labels, total_results):
+    sns.lineplot(x=scale_factors, y=vars, label=f"n={label}")
+    plt.legend()
+fig.supxlabel("Scale Factor")
+fig.supylabel("Variance of Estimates")
+
+fig.set_tight_layout(tight=True)
+
+
+
+
 
