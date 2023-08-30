@@ -207,7 +207,7 @@ for seed in range(seed):
         sampling_num += 1
 
         if cond_mc_num < 200:
-            z = np.random.multivariate_normal(mu_1, cov_2, 1)
+            z = np.random.multivariate_normal(mu_1, cov, 1)
             [[z1, z2, z3, z4]] = z.tolist()
 
             if z1 > z2 > z3 > z4:
@@ -267,6 +267,7 @@ result_list = [
     ("10000", ns_seed_10000, is_seed_10000),
     ("100000", ns_seed_100000, is_seed_100000),
     ]
+
 # ns_seed_result.tolist()
 fig, axes = plt.subplots(nrows=2, ncols=2, figsize=(20, 20))
 for num, (n, ns_seed_result, is_seed_result) in enumerate(result_list):
@@ -326,23 +327,23 @@ for num, (label, vars) in enumerate(zip(sample_labels, total_results)):
     axes[i][j].set_title(f"n = {label}")
     axes[i][j].set_xlabel("Scale Factor")
     axes[i][j].set_ylabel("Variance of Esimates")
+    axes[i][j].legend(fontsize=15)
     options = [
         axes[i][j].title,
         axes[i][j].xaxis.label,
         axes[i][j].yaxis.label,
+        axes[i][j].yaxis.offsetText,
         ]
     option_list = options + axes[i][j].get_xticklabels() + axes[i][j].get_yticklabels()
     for item in option_list:
         item.set_fontsize(20)
 
 fig.set_tight_layout(tight=True)
-
 plt.show()
-
 
 #%%
 total_results = []
-for sample_str in sample_list:
+for i, sample_str in enumerate(sample_list):
     sample_files = [file for file in os.listdir(result_dir) if file.__contains__(sample_str) and not file.__contains__("_1_0.")]
     results = []
     for scale_str in scale_list:
@@ -350,7 +351,8 @@ for sample_str in sample_list:
         print(scale_file)
         scale_result = np.load(f"./{result_dir}/{scale_file}")
         scale_var = np.var(scale_result)
-        results.append(scale_var)
+        relative_eff = ns_results[i] / scale_var
+        results.append(relative_eff)
     total_results.append(results)
 
 
@@ -361,7 +363,7 @@ for label, vars in zip(sample_labels, total_results):
     sns.lineplot(x=scale_factors, y=vars, label=f"n={label}")
     plt.legend()
 fig.supxlabel("Scale Factor")
-fig.supylabel("Variance of Estimates")
+fig.supylabel("Relative Efficiency")
 
 fig.set_tight_layout(tight=True)
 
@@ -369,3 +371,5 @@ fig.set_tight_layout(tight=True)
 
 
 
+
+# %%
