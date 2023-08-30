@@ -302,7 +302,8 @@ total_results = []
 ns_results = []
 for sample_str in sample_list:
     sample_files = [file for file in os.listdir(result_dir) if file.__contains__(sample_str) and not file.__contains__("_1_0.")]
-    ns_file = [file for file in os.listdir(result_dir) if file.__contains__(sample_str.replace("_", "")) and file.__contains__("ns")][0]
+    ns_file = [file for file in os.listdir(result_dir) if file.__contains__(sample_str.replace("_", ".")) and file.__contains__("ns")][0]
+    print(ns_file)
     ns_result = np.load(f"./{result_dir}/{ns_file}") 
     ns_var = np.var(ns_result)
     ns_results.append(ns_var)
