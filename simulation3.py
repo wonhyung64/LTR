@@ -56,7 +56,7 @@ off_diagonal = .25
 cov = np.ones([4, 4]) * off_diagonal
 np.fill_diagonal(cov, diagonal, wrap=True)
 
-cov2 = np.ones([4, 4]) * 0.
+cov2 = np.ones([4, 4]) * 1e-9
 # scale_factor = 1.
 # np.fill_diagonal(cov2, diagonal * scale_factor, wrap=True)
 
