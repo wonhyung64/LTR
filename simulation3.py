@@ -62,7 +62,8 @@ cov2 = np.ones([4, 4]) * 1e-9
 
 seeds = 1000
 max_sampling_num = 100000
-scale_factors = np.arange(0., 1.1, 0.1)
+# scale_factors = np.arange(0., 1.1, 0.1)
+scale_factors = [0.01, 0.001, 2.]
 
 save_dir = "./data/simulation3"
 os.makedirs(save_dir, exist_ok=True)
@@ -124,13 +125,14 @@ result_dir = "data/simulation3"
 
 #%% line graph
 sample_list = ["100_", "1000_", "10000_", "100000_"]
-scale_list = ["_0_0.", "_0_1.", "_0_2.", "_0_30000000000000004.", "_0_4.", "_0_5.", "_0_6000000000000001.", "_0_7000000000000001.", "_0_8.", "_0_9."]
-scale_factors = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+scale_list = ["_0_001.", "_0_01.", "_0_1.", "_0_2.", "_0_3.", "_0_4.", "_0_5.", "_0_6.", "_0_7.", "_0_8.", "_0_9.", "_1_0.", "_2_0."]
+scale_factors = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 2.0]
 sample_labels = ["100", "1000", "10000", "100000"]
+
 total_results = []
 ns_results = []
 for sample_str in sample_list:
-    sample_files = [file for file in os.listdir(result_dir) if file.__contains__(sample_str) and not file.__contains__("_1_0.")]
+    sample_files = [file for file in os.listdir(result_dir) if file.__contains__(sample_str)]
     ns_file = [file for file in os.listdir("data/simulation") if file.__contains__(sample_str.replace("_", ".")) and file.__contains__("ns")][0]
     print(ns_file)
     ns_result = np.load(f"./data/simulation/{ns_file}") 
@@ -174,7 +176,7 @@ plt.show()
 #%%
 total_results = []
 for i, sample_str in enumerate(sample_list):
-    sample_files = [file for file in os.listdir(result_dir) if file.__contains__(sample_str) and not file.__contains__("_1_0.")]
+    sample_files = [file for file in os.listdir(result_dir) if file.__contains__(sample_str)]
     results = []
     for scale_str in scale_list:
         scale_file = [file for file in sample_files if file.__contains__(scale_str)][0]
