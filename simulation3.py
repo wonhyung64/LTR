@@ -198,3 +198,4 @@ fig.supxlabel("Scale Factor")
 fig.supylabel("Relative Efficiency")
 
 fig.set_tight_layout(tight=True)
+#%%
