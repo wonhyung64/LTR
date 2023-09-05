@@ -63,9 +63,11 @@ cov2 = np.ones([4, 4]) * 1e-9
 seeds = 1000
 max_sampling_num = 100000
 # scale_factors = np.arange(0., 1.1, 0.1)
-scale_factors = [0.01, 0.001, 2.]
+K = range(-5, 5)
 
-save_dir = "./data/simulation3"
+scale_factors = [2**k for k in K]
+
+save_dir = "./data/simulation3_2"
 os.makedirs(save_dir, exist_ok=True)
 
 
@@ -118,7 +120,7 @@ for scale_factor in scale_factors:
     np.save(f"{save_dir}/is_10000_{scale_factor_str}", np.array(is_seed_10000), allow_pickle=True)
     np.save(f"{save_dir}/is_100000_{scale_factor_str}", np.array(is_seed_100000), allow_pickle=True)
 
-
+'''
 #%%
 result_dir = "data/simulation3"
 
@@ -198,4 +200,5 @@ fig.supxlabel("Scale Factor")
 fig.supylabel("Relative Efficiency")
 
 fig.set_tight_layout(tight=True)
-#%%
+
+'''
