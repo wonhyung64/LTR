@@ -64,7 +64,6 @@ seeds = 1000
 max_sampling_num = 100000
 # scale_factors = np.arange(0., 1.1, 0.1)
 K = range(-5, 5)
-
 scale_factors = [2**k for k in K]
 
 save_dir = "./data/simulation3_2"
@@ -120,15 +119,14 @@ for scale_factor in scale_factors:
     np.save(f"{save_dir}/is_10000_{scale_factor_str}", np.array(is_seed_10000), allow_pickle=True)
     np.save(f"{save_dir}/is_100000_{scale_factor_str}", np.array(is_seed_100000), allow_pickle=True)
 
-'''
 #%%
-result_dir = "data/simulation3"
+result_dir = "data/simulation3_2"
 
 
 #%% line graph
 sample_list = ["100_", "1000_", "10000_", "100000_"]
-scale_list = ["_0_001.", "_0_01.", "_0_1.", "_0_2.", "_0_3.", "_0_4.", "_0_5.", "_0_6.", "_0_7.", "_0_8.", "_0_9.", "_1_0.", "_2_0."]
-scale_factors = [0.001, 0.01, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 2.0]
+scale_list = ["_0_03125.", "_0_0625.", "_0_125.", "_0_25.", "_0_5.", "_1.", "_2.", "_4.", "_8.", "_16."]
+scale_factors = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4]
 sample_labels = ["100", "1000", "10000", "100000"]
 
 total_results = []
@@ -141,6 +139,7 @@ for sample_str in sample_list:
     ns_var = np.var(ns_result)
     ns_results.append(ns_var)
     results = []
+
     for scale_str in scale_list:
         scale_file = [file for file in sample_files if file.__contains__(scale_str)][0]
         print(scale_file)
@@ -159,7 +158,7 @@ for num, (label, vars) in enumerate(zip(sample_labels, total_results)):
     sns.lineplot(x=scale_factors, y=ns_results[num], label="Naive", ax=axes[i][j])
     sns.lineplot(x=scale_factors, y=vars, label="Importance", ax=axes[i][j])
     axes[i][j].set_title(f"n = {label}")
-    axes[i][j].set_xlabel("Scale Factor")
+    axes[i][j].set_xlabel("Scale Factor (K)")
     axes[i][j].set_ylabel("Variance of Esimates")
     axes[i][j].legend(fontsize=15)
     options = [
@@ -196,9 +195,10 @@ fig.set_facecolor('white')
 for label, vars in zip(sample_labels, total_results):
     sns.lineplot(x=scale_factors, y=vars, label=f"n={label}")
     plt.legend()
-fig.supxlabel("Scale Factor")
+fig.supxlabel("Scale Factor (K)")
 fig.supylabel("Relative Efficiency")
 
 fig.set_tight_layout(tight=True)
 
-'''
+
+# %%
