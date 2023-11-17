@@ -62,7 +62,7 @@ if __name__ == "__main__":
         dataset=IRDataset(data_dir, "test"))
 
 
-    for batch_x, batch_y in train_loader:
+    for batch_x, batch_y in train_loader:break
         batch_x = batch_x.to(device)
         batch_y = batch_y.to(device)
         print(batch_x.shape, batch_y.shape)
@@ -74,5 +74,22 @@ if __name__ == "__main__":
     print(dcg_fn(relevance))
     print(idcg_fn(relevance))
     print(ndcg_fn(relevance))
+
+# %%
+train_iter = iter(train_loader)
+x, y = next(train_iter)
+x.shape
+y.shape
+dataset=IRDataset(data_dir, "train")
+x, y = dataset[9]
+print(x.shape, y.shape)
+
+sample_num_list = []
+for x, y in dataset:
+    sample_num_list.append(x.shape[0])
+    sample_num_list.sort()
+    len(sample_num_list)
+
+np.mean(sample_num_list)
 
 # %%
