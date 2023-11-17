@@ -55,7 +55,9 @@ for x, label in ds_train.take(1):
         print()
     print(f"Shape of label: {label.shape}")
     print(f"Example values of label: {label[:3, :3].numpy()}")
-
+label[0]
+key
+value[0]
 user_ids_vocabulary.vocabulary_size()
 movie_titles_vocabulary.vocabulary_size()
 
@@ -85,17 +87,27 @@ eval_metrics = [
 ]
 
 
-
+user_embed = tf.keras.layers.Embedding(user_ids_vocabulary.vocabulary_size(), 64)
+movie_embed = tf.keras.layers.Embedding(movie_titles_vocabulary.vocabulary_size(), 64)
+movie_embed(movie_titles_vocabulary(features["movie_title"]))
+user_embed(user_ids_vocabulary(features["user_id"])).shape
+movie_titles_vocabulary(features["movie_title"])[0]
+movie_titles_vocabulary(features["movie_title"])[0]
+# (batch_size, sample_size, feature_dim)
 from tqdm import tqdm
 
 epochs = 3
-for epoch in range(epochs):
+for epoch in range(epochs):break
     progress_bar = tqdm(enumerate(ds_train))
     # progress_bar.set_description(f"Epoch {epoch}/{epochs}: ")
-    for _, (features, ratings)  in progress_bar:
+    for _, (features, ratings)  in progress_bar:break
         b = ratings.shape[0]
         with tf.GradientTape() as tape:
             pred = model(features)
+            type(features)
+            features["movie_title"][0]
+            features["user_id"]
+            ratings
             loss = - tf.reduce_sum(ratings * tf.math.log(tf.nn.softmax(pred, axis=-1))) / b
         progress_bar.set_description(f"Epoch: {epoch}/{epochs} -  loss: {round(loss.numpy(), 3)}")
         grads = tape.gradient(loss, model.trainable_weights)
