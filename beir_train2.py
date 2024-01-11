@@ -29,7 +29,6 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
 
 #### Download nfcorpus.zip dataset and unzip the dataset
 dataset = "msmarco"
-
 url = "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/{}.zip".format(dataset)
 out_dir = os.path.join(pathlib.Path(__file__).parent.absolute(), "datasets")
 data_path = util.download_and_unzip(url, out_dir)
