@@ -1,18 +1,3 @@
-'''
-This examples show how to train a basic Bi-Encoder for any BEIR dataset without any mined hard negatives or triplets.
-
-The queries and passages are passed independently to the transformer network to produce fixed sized embeddings.
-These embeddings can then be compared using cosine-similarity to find matching passages for a given query.
-
-For training, we use MultipleNegativesRankingLoss. There, we pass pairs in the format:
-(query, positive_passage). Other positive passages within a single batch becomes negatives given the pos passage.
-
-We do not mine hard negatives or train triplets in this example.
-
-Running this script:
-python train_sbert.py
-'''
-
 from sentence_transformers import losses, models, SentenceTransformer
 from beir import util, LoggingHandler
 from beir.datasets.data_loader import GenericDataLoader
@@ -40,13 +25,15 @@ corpus, queries, qrels = GenericDataLoader(data_path).load(split="train")
 _, dev_queries, dev_qrels = GenericDataLoader(data_path).load(split="dev")
 
 #### Provide any sentence-transformers or HF model
-# model_name = "distilbert-base-uncased" 
-# word_embedding_model = models.Transformer(model_name, max_seq_length=350)
+model_name = "distilbert-base-uncased" 
+word_embedding_model = models.Transformer(model_name, max_seq_length=350)
 # pooling_model = models.Pooling(word_embedding_model.get_word_embedding_dimension())
 # model = SentenceTransformer(modules=[word_embedding_model, pooling_model])
 
-model_path = "splade/weights/distilsplade_max"
+# model_path = "splade/weights/distilsplade_max"
+model_path = "jingtao/SPLADE-bert_base-contrast-msmarco"
 model = models.SPLADE(model_path)
+
 
 #### Or provide pretrained sentence-transformer model
 # model = SentenceTransformer("msmarco-distilbert-base-v3")

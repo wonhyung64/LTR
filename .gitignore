@@ -22,3 +22,4 @@ data
 */__pycache__/*
 *.pyc
 datasets/
+output/
